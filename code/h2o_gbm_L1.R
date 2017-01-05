@@ -218,6 +218,20 @@ for (n in 1:n_folds) {
 cat("\n\n=============== Summary of Metrics: =============== \n")
 print(d_eval)
 
+# =============== Summary of Metrics: =============== 
+#   model_id algo learn_rate n_trees max_depth row_samp col_samp seed
+# 1 grid_gbm_model_0  gbm       0.05     198         4      0.7      0.9 1234
+# 2 grid_gbm_model_4  gbm       0.05     194         4      0.6      0.6 1234
+# 3 grid_gbm_model_2  gbm       0.05     193         4      0.6      0.9 1234
+# 4 grid_gbm_model_1  gbm       0.05     240         3      0.9      0.7 1234
+# 5 grid_gbm_model_3  gbm       0.05     241         3      0.7      0.8 1234
+# n_cv_fold logloss_train logloss_cv logloss_valid
+# 1         5     0.9502685  0.9934115     0.9464101
+# 2         5     0.9522171  0.9938626     0.9448556
+# 3         5     0.9566952  0.9980570     0.9685286
+# 4         5     0.9734655  0.9994102     0.9443164
+# 5         5     0.9742857  1.0013029     0.9458400
+
 
 # ------------------------------------------------------------------------------
 # Saving files
@@ -225,21 +239,27 @@ print(d_eval)
 
 # Save H2O models
 for (n in 1:n_folds) {
-  h2o.saveModel(gbm_models[[n]], path = "./output/h2o_gbm_level_one/", force = TRUE)
+  h2o.saveModel(gbm_models[[n]], path = "./output/h2o_gbm_L1_run1/", force = TRUE)
 }
 
 # Write evaluaton results to disk
-fwrite(d_eval, file = "./output/h2o_gbm_level_one/L1_eval.csv")
+fwrite(d_eval, file = "./output/h2o_gbm_L1_run1/L1_eval.csv")
+
+# Round it
+L1_train[, -ncol(L1_train)] <- round(L1_train[, -ncol(L1_train)], 4)
+L1_valid[, -ncol(L1_valid)] <- round(L1_valid[, -ncol(L1_valid)], 4)
+L1_test <- round(L1_test, 4)
 
 # Write L1 data to disk
-fwrite(L1_train, file = "./output/h2o_gbm_level_one/L1_train.csv")
-fwrite(L1_valid, file = "./output/h2o_gbm_level_one/L1_valid.csv")
-fwrite(L1_test, file = "./output/h2o_gbm_level_one/L1_test.csv")
+options(digits = 18)
+fwrite(L1_train, file = "./output/h2o_gbm_L1_run1/L1_train.csv")
+fwrite(L1_valid, file = "./output/h2o_gbm_L1_run1/L1_valid.csv")
+fwrite(L1_test, file = "./output/h2o_gbm_L1_run1/L1_test.csv")
 
 # Gzip L1 data 
-system("gzip -9 -v ./output/h2o_gbm_level_one/L1_train.csv")
-system("gzip -9 -v ./output/h2o_gbm_level_one/L1_valid.csv")
-system("gzip -9 -v ./output/h2o_gbm_level_one/L1_test.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_train.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_valid.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_test.csv")
 
 
 # ------------------------------------------------------------------------------
@@ -249,32 +269,40 @@ system("gzip -9 -v ./output/h2o_gbm_level_one/L1_test.csv")
 print(sessionInfo())
 print(Sys.info())
 
-# > print(sessionInfo())
-# R version 3.3.2 (2016-10-31)
-# Platform: x86_64-pc-linux-gnu (64-bit)
-# Running under: Linux Mint 18
+# R version 3.2.3 (2015-12-10)
+# Platform: aarch64-unknown-linux-gnu (64-bit)
+# Running under: Ubuntu 16.04.1 LTS
 # 
 # locale:
-#   [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C               LC_TIME=en_GB.UTF-8       
-# [4] LC_COLLATE=en_GB.UTF-8     LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
-# [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
-# [10] LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+#   [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+# [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+# [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+# [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+# [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+# [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 # 
 # attached base packages:
-#   [1] stats     graphics  grDevices utils     datasets  methods   base     
+#   [1] methods   stats     graphics  grDevices utils     datasets  base     
 # 
 # other attached packages:
-#   [1] data.table_1.10.1 h2o_3.10.2.1     
+#   [1] data.table_1.10.0 h2o_3.10.2.1     
 # 
 # loaded via a namespace (and not attached):
-#   [1] tools_3.3.2    RCurl_1.95-4.8 jsonlite_1.1   bitops_1.0-6  
-# > print(Sys.info())
-# sysname                                       release 
-# "Linux"                            "4.4.0-21-generic" 
-# version                                      nodename 
-# "#37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016"                                    "asus-zbp" 
-# machine                                         login 
-# "x86_64"                                     "unknown" 
-# user                                effective_user 
-# "joe"                                         "joe" 
+#   [1] tools_3.2.3    RCurl_1.95-4.8 jsonlite_1.2   bitops_1.0-6  
+# sysname 
+# "Linux" 
+# release 
+# "4.4.0-38-generic" 
+# version 
+# "#57-Ubuntu SMP Wed Sep 7 10:19:14 UTC 2016" 
+# nodename 
+# "joe.local.lan" 
+# machine 
+# "aarch64" 
+# login 
+# "root" 
+# user 
+# "root" 
+# effective_user 
+# "root" 
 
