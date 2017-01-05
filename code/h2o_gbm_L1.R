@@ -33,7 +33,7 @@ csv_test <- "./data/d_test.csv"
 
 # Start H2O clusters
 h2o.init(nthreads = -1)
-h2o.no_progress() # disable progress bar 
+# h2o.no_progress() # disable progress bar 
 
 # Data created with data_prep.R
 h_train <- h2o.importFile(gz_train)
