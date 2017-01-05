@@ -239,11 +239,11 @@ print(d_eval)
 
 # Save H2O models
 for (n in 1:n_folds) {
-  h2o.saveModel(gbm_models[[n]], path = "./output/h2o_gbm_L1_run1/", force = TRUE)
+  h2o.saveModel(gbm_models[[n]], path = "./output/h2o_gbm_L1_run2/", force = TRUE)
 }
 
 # Write evaluaton results to disk
-fwrite(d_eval, file = "./output/h2o_gbm_L1_run1/L1_eval.csv")
+fwrite(d_eval, file = "./output/h2o_gbm_L1_run2/L1_eval.csv")
 
 # Round it
 L1_train[, -ncol(L1_train)] <- round(L1_train[, -ncol(L1_train)], 4)
@@ -252,14 +252,14 @@ L1_test <- round(L1_test, 4)
 
 # Write L1 data to disk
 options(digits = 18)
-fwrite(L1_train, file = "./output/h2o_gbm_L1_run1/L1_train.csv")
-fwrite(L1_valid, file = "./output/h2o_gbm_L1_run1/L1_valid.csv")
-fwrite(L1_test, file = "./output/h2o_gbm_L1_run1/L1_test.csv")
+fwrite(L1_train, file = "./output/h2o_gbm_L1_run2/L1_train.csv")
+fwrite(L1_valid, file = "./output/h2o_gbm_L1_run2/L1_valid.csv")
+fwrite(L1_test, file = "./output/h2o_gbm_L1_run2/L1_test.csv")
 
 # Gzip L1 data 
-system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_train.csv")
-system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_valid.csv")
-system("gzip -9 -v ./output/h2o_gbm_L1_run1/L1_test.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run2/L1_train.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run2/L1_valid.csv")
+system("gzip -9 -v ./output/h2o_gbm_L1_run2/L1_test.csv")
 
 
 # ------------------------------------------------------------------------------
